@@ -21,8 +21,12 @@ func main() {
 
     if strings.Compare("hi", text) == 0 {
       fmt.Println("hello, Yourself")
+    } else if strings.Compare("bye", text) == 0 {
+      fmt.Println("bye, Yourself")
+			os.Exit(3)
     }
 
   }
 
 }
+
