@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 	"flag"
+	"ioutil"
 )
 
 
@@ -47,6 +48,9 @@ func quiz(){
 	// Parse the file
 	r := csv.NewReader(csvfile)
 	reader := bufio.NewReader(os.Stdin)
+
+    data, err := ioutil.ReadAll(csvfile)
+    fmt.Printf("\nLength: %d bytes", len(data))
 
 	counter := 1
 
