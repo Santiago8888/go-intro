@@ -12,6 +12,10 @@ import (
 	"flag"
 )
 
+
+var score = 0
+
+
 func main() {
     c1 := make(chan string, 1)
 	timeout := flag.Int("timeout", 5, "timeout of quiz")
@@ -29,6 +33,7 @@ func main() {
         fmt.Println(res)
     case <-time.After(time.Duration(*timeout) * time.Second):
         fmt.Println("\nout of time :(")
+		fmt.Printf("Score: %d\n", score);
     }
 }
 
@@ -42,8 +47,8 @@ func quiz(){
 	// Parse the file
 	r := csv.NewReader(csvfile)
 	reader := bufio.NewReader(os.Stdin)
+
 	counter := 1
-	score := 0
 
 	// Iterate through the records
 	for {
@@ -57,6 +62,7 @@ func quiz(){
 		}
 		fmt.Printf("Problem #%d: %s = ", counter, record[0])
 		text, _ := reader.ReadString('\n')
+
 		// convert CRLF to LF
 		text = strings.Replace(text, "\n", "", -1)
 
