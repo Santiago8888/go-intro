@@ -10,22 +10,21 @@ import (
 	"strings"
 	"time"
 	"flag"
-	"ioutil"
 )
 
 
 var score = 0
 
-
 func main() {
     c1 := make(chan string, 1)
 	timeout := flag.Int("timeout", 5, "timeout of quiz")
+	fileName := flag.String("csv", "quiz.csv", "quiz file")
 	flag.Parse()
 
     // Run your long running function in it's own goroutine and pass back it's
     // response into our channel.
     go func() {
-        quiz()
+        quiz(*fileName)
     }()
 
     // Listen on our channel AND a timeout channel - which ever happens first.
@@ -33,14 +32,18 @@ func main() {
     case res := <-c1:
         fmt.Println(res)
     case <-time.After(time.Duration(*timeout) * time.Second):
-        fmt.Println("\nout of time :(")
-		fmt.Printf("Score: %d\n", score);
+		csvfile, _ := os.Open(*fileName)
+		r := csv.NewReader(csvfile)
+		lines, _ := r.ReadAll()
+
+        fmt.Println("\n\nout of time :(")
+		fmt.Printf("Scored %d out of %d\n", score, len(lines));
     }
 }
 
-func quiz(){
+func quiz(fileName string){
 	// Open the file
-	csvfile, err := os.Open("quiz.csv")
+	csvfile, err := os.Open(fileName)
 	if err != nil {
 		log.Fatalln("Couldn't open the csv file", err)
 	}
@@ -49,11 +52,7 @@ func quiz(){
 	r := csv.NewReader(csvfile)
 	reader := bufio.NewReader(os.Stdin)
 
-    data, err := ioutil.ReadAll(csvfile)
-    fmt.Printf("\nLength: %d bytes", len(data))
-
 	counter := 1
-
 	// Iterate through the records
 	for {
 		// Read each record from csv
