@@ -9,10 +9,13 @@ import (
 	"bufio"
 	"strings"
 	"time"
+	"flag"
 )
 
 func main() {
     c1 := make(chan string, 1)
+	timeout := flag.Int("timeout", 5, "timeout of quiz")
+	flag.Parse()
 
     // Run your long running function in it's own goroutine and pass back it's
     // response into our channel.
@@ -24,7 +27,7 @@ func main() {
     select {
     case res := <-c1:
         fmt.Println(res)
-    case <-time.After(3 * time.Second):
+    case <-time.After(time.Duration(*timeout) * time.Second):
         fmt.Println("\nout of time :(")
     }
 }
