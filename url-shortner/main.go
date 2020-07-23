@@ -3,12 +3,14 @@ package main
 import (
 	"fmt"
 	"net/http"
+//	"./handler"
 
 //	"github.com/gophercises/urlshort"
 )
 
 func main() {
 	mux := defaultMux()
+	mapHandler := mapHandler(mux)
 
 /*
 	// Build the MapHandler using the mux as the fallback
@@ -30,10 +32,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Starting the server on :8080")
-	http.ListenAndServe(":8080", yamlHandler)
 */
-	http.ListenAndServe(":8080", mux)
+
+	fmt.Println("Starting the server on http://localhost:8080")
+	http.ListenAndServe(":8080", mapHandler)
 }
 
 func defaultMux() *http.ServeMux {
@@ -45,3 +47,15 @@ func defaultMux() *http.ServeMux {
 func hello(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Hello, world!")
 }
+
+
+func mapHandler(mux http.Handler) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if(r.RequestURI == "/bye"){
+			http.Redirect(w, r, "https://example.com", http.StatusMovedPermanently)
+		}
+
+    		mux.ServeHTTP(w, r)
+  	})
+}
+
