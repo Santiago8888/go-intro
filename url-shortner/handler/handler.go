@@ -1,15 +1,12 @@
 package handler
 
 import (
+	"fmt"
+	"reflect"
 	"net/http"
+	yaml "gopkg.in/yaml.v2"
 )
 
-// MapHandler will return an http.HandlerFunc (which also
-// implements http.Handler) that will attempt to map any
-// paths (keys in the map) to their corresponding URL (values
-// that each key in the map points to, in string format).
-// If the path is not provided in the map, then the fallback
-// http.Handler will be called instead.
 func MapHandler(pathsToUrls map[string]string, mux http.Handler) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if _, ok := pathsToUrls[r.RequestURI]; ok {
@@ -20,23 +17,34 @@ func MapHandler(pathsToUrls map[string]string, mux http.Handler) http.HandlerFun
   	})
 }
 
-// YAMLHandler will parse the provided YAML and then return
-// an http.HandlerFunc (which also implements http.Handler)
-// that will attempt to map any paths to their corresponding
-// URL. If the path is not provided in the YAML, then the
-// fallback http.Handler will be called instead.
-//
-// YAML is expected to be in the format:
-//
-//     - path: /some-path
-//       url: https://www.some-url.com/demo
-//
-// The only errors that can be returned all related to having
-// invalid YAML data.
-//
-// See MapHandler to create a similar http.HandlerFunc via
-// a mapping of paths to urls.
-func YAMLHandler(yml []byte, fallback http.Handler) (http.HandlerFunc, error) {
-	// TODO: Implement this...
-	return nil, nil
+
+type Keys struct {
+	Path string 
+	Url string
 }
+
+func getField(v *Keys, field string) string {
+    r := reflect.ValueOf(v)
+    f := reflect.Indirect(r).FieldByName(field)
+    return string(f.String())
+}
+
+func YAMLHandler(yml []byte, mux http.Handler) http.HandlerFunc {
+	keys := make([]Keys, 0)
+	yaml.Unmarshal(yml, &keys)
+	
+	m := make(map[string]string)
+	for i := range keys {
+		m[getField(&keys[i], "Path")] = getField(&keys[0], "Url")
+	}
+
+	fmt.Println("map:", m)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if _, ok := m[r.RequestURI]; ok {
+			http.Redirect(w, r, m[r.RequestURI], http.StatusSeeOther)
+		}
+
+    		mux.ServeHTTP(w, r)
+  	})
+}
+
