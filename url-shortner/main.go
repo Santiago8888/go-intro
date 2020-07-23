@@ -10,14 +10,15 @@ import (
 
 func main() {
 	mux := defaultMux()
-	mapHandler := mapHandler(mux)
-
-/*
-	// Build the MapHandler using the mux as the fallback
 	pathsToUrls := map[string]string{
 		"/urlshort-godoc": "https://godoc.org/github.com/gophercises/urlshort",
 		"/yaml-godoc":     "https://godoc.org/gopkg.in/yaml.v2",
 	}
+
+	mapHandler := mapHandler(pathsToUrls, mux)
+
+/*
+	// Build the MapHandler using the mux as the fallback
 	mapHandler := urlshort.MapHandler(pathsToUrls, mux)
 
 	// Build the YAMLHandler using the mapHandler as the
@@ -49,10 +50,10 @@ func hello(w http.ResponseWriter, r *http.Request) {
 }
 
 
-func mapHandler(mux http.Handler) http.HandlerFunc {
+func mapHandler(pathsToUrls map[string]string, mux http.Handler) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if(r.RequestURI == "/bye"){
-			http.Redirect(w, r, "https://example.com", http.StatusMovedPermanently)
+		if _, ok := pathsToUrls[r.RequestURI]; ok {
+			http.Redirect(w, r, pathsToUrls[r.RequestURI], http.StatusSeeOther)
 		}
 
     		mux.ServeHTTP(w, r)
