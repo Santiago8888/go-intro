@@ -3,9 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
-//	"./handler"
-
-//	"github.com/gophercises/urlshort"
+	"./handler"
 )
 
 func main() {
@@ -15,12 +13,9 @@ func main() {
 		"/yaml-godoc":     "https://godoc.org/gopkg.in/yaml.v2",
 	}
 
-	mapHandler := mapHandler(pathsToUrls, mux)
+	mapHandler := handler.MapHandler(pathsToUrls, mux)
 
 /*
-	// Build the MapHandler using the mux as the fallback
-	mapHandler := urlshort.MapHandler(pathsToUrls, mux)
-
 	// Build the YAMLHandler using the mapHandler as the
 	// fallback
 	yaml := `
@@ -47,16 +42,5 @@ func defaultMux() *http.ServeMux {
 
 func hello(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Hello, world!")
-}
-
-
-func mapHandler(pathsToUrls map[string]string, mux http.Handler) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if _, ok := pathsToUrls[r.RequestURI]; ok {
-			http.Redirect(w, r, pathsToUrls[r.RequestURI], http.StatusSeeOther)
-		}
-
-    		mux.ServeHTTP(w, r)
-  	})
 }
 

@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -11,14 +10,14 @@ import (
 // that each key in the map points to, in string format).
 // If the path is not provided in the map, then the fallback
 // http.Handler will be called instead.
-func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.HandlerFunc {
-	return fmt.Fprintln("/bye", "bye")
-//	return fallback.HandleFunc("/bye", bye)
-//	fallback
-}
+func MapHandler(pathsToUrls map[string]string, mux http.Handler) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if _, ok := pathsToUrls[r.RequestURI]; ok {
+			http.Redirect(w, r, pathsToUrls[r.RequestURI], http.StatusSeeOther)
+		}
 
-func bye(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Bye, world!")
+    		mux.ServeHTTP(w, r)
+  	})
 }
 
 // YAMLHandler will parse the provided YAML and then return
