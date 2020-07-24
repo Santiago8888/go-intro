@@ -28,7 +28,14 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("%+v", f)
+	keys := make([]string, 0, len(f.acts))
+	for k := range f.acts {
+		keys = append(keys, k)
+	}
+
+	fmt.Println(keys)
+
+	fmt.Printf("%+v", f.acts["intro"])
 	fmt.Println("\nSuccessfully Opened gopher.json")
 
 	defer jsonFile.Close()
