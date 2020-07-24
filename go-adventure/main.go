@@ -31,25 +31,21 @@ func main() {
 	}
 
 
-	// fmt.Printf("%+v\n", f.acts["intro"])
-
 	intro := f.acts["intro"]
 	v := intro.(map[string]interface{})
-	fmt.Printf("%+v\n", v["title"])
+	fmt.Printf("TITLE: %+v\n", v["title"])
+
+	story := v["story"]
+	v1 := story.([]interface{})
+	// fmt.Println(v1)
+
+	for i, k := range v1 {
+		if i == 0 {
+			fmt.Printf("STORY: %+v\n", k)
+		}
+	}
 
 
 	defer jsonFile.Close()
 }
-
-
-/*
-	keys := make([]string, 0, len(f.acts))
-	for k := range f.acts {
-		keys = append(keys, k)
-	}
-	fmt.Println(keys)
-	fmt.Println("\nSuccessfully Opened gopher.json")
-
-*/
-
 
