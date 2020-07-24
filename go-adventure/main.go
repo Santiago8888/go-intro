@@ -7,9 +7,11 @@ import (
 	"os"
 )
 
+
 type Acts struct {
-	acts map[string]interface{} `json:"-"`
+	acts map[string] interface {} `json:"-"`
 }
+
 
 func main() {
 	// Open our jsonFile
@@ -28,16 +30,26 @@ func main() {
 		panic(err)
 	}
 
+
+	// fmt.Printf("%+v\n", f.acts["intro"])
+
+	intro := f.acts["intro"]
+	v := intro.(map[string]interface{})
+	fmt.Printf("%+v\n", v["title"])
+
+
+	defer jsonFile.Close()
+}
+
+
+/*
 	keys := make([]string, 0, len(f.acts))
 	for k := range f.acts {
 		keys = append(keys, k)
 	}
-
 	fmt.Println(keys)
-
-	fmt.Printf("%+v", f.acts["intro"])
 	fmt.Println("\nSuccessfully Opened gopher.json")
 
-	defer jsonFile.Close()
-}
+*/
+
 
