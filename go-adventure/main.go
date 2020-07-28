@@ -14,6 +14,7 @@ type Acts struct {
 
 
 func main() {
+
 	// Open our jsonFile
 	jsonFile, err := os.Open("gopher.json")
 
@@ -24,6 +25,12 @@ func main() {
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 
+	parseStory(byteValue, "intro")
+
+	defer jsonFile.Close()
+}
+
+func parseStory(byteValue []byte, name string) {
 	f := Acts{}
 
 	if err := json.Unmarshal([]byte(byteValue), &f.acts); err != nil {
@@ -31,7 +38,7 @@ func main() {
 	}
 
 
-	intro := f.acts["intro"]
+	intro := f.acts[name]
 	v := intro.(map[string]interface{})
 	fmt.Printf("TITLE: %+v\n", v["title"])
 
@@ -55,8 +62,5 @@ func main() {
 		arc := option["arc"]
 		fmt.Printf("%d. %+v\n", i + 1, arc)
 	}
-
-
-	defer jsonFile.Close()
 }
 
