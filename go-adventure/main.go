@@ -15,7 +15,6 @@ type Acts struct {
 
 
 func main() {
-	mux := serve()
 
 	fmt.Println("Starting Go Adventure server on http://localhost:8080")
 
@@ -30,28 +29,6 @@ func main() {
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 	jsonFile.Close()
 
-	parseStory(byteValue, "intro")
-
-	http.ListenAndServe(":8080", mux)
-}
-
-
-func serve() *http.ServeMux {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", hello)
-	mux.HandleFunc("/intro", hello)
-	return mux
-}
-
-
-func hello(w http.ResponseWriter, r *http.Request) {
-//	fmt.Fprintln(w, "Hello, world!")
-	fmt.Fprintln(w, r.RequestURI)
-}
-
-
-
-func parseStory(byteValue []byte, name string) {
 	f := Acts{}
 
 	if err := json.Unmarshal([]byte(byteValue), &f.acts); err != nil {
@@ -59,6 +36,34 @@ func parseStory(byteValue []byte, name string) {
 	}
 
 
+	mux := serve(f)
+	parseStory(f, "intro")
+
+	http.ListenAndServe(":8080", mux)
+}
+
+
+func serve(f Acts) *http.ServeMux {
+	mux := http.NewServeMux()
+
+	// TODO: Add default route that maps to index.
+	// mux.HandleFunc("/", route)
+
+	for i := range f.acts {
+		mux.HandleFunc("/"+ i, route)
+	}
+
+	return mux
+}
+
+
+func route(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, r.RequestURI)
+}
+
+
+
+func parseStory(f Acts, name string) {
 	intro := f.acts[name]
 	v := intro.(map[string]interface{})
 	fmt.Printf("TITLE: %+v\n", v["title"])
