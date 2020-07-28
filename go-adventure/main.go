@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
+	"net/http"
 	"fmt"
 	"os"
 )
@@ -14,6 +15,9 @@ type Acts struct {
 
 
 func main() {
+	mux := serve()
+
+	fmt.Println("Starting Go Adventure server on http://localhost:8080")
 
 	// Open our jsonFile
 	jsonFile, err := os.Open("gopher.json")
@@ -24,11 +28,28 @@ func main() {
 	}
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
+	jsonFile.Close()
 
 	parseStory(byteValue, "intro")
 
-	defer jsonFile.Close()
+	http.ListenAndServe(":8080", mux)
 }
+
+
+func serve() *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", hello)
+	mux.HandleFunc("/intro", hello)
+	return mux
+}
+
+
+func hello(w http.ResponseWriter, r *http.Request) {
+//	fmt.Fprintln(w, "Hello, world!")
+	fmt.Fprintln(w, r.RequestURI)
+}
+
+
 
 func parseStory(byteValue []byte, name string) {
 	f := Acts{}
