@@ -15,10 +15,10 @@
 	- Create Routes based on JSON (Done).
 	- Add dynamic routes for JSON keys (Done).
 
-5. Style the HTML. ()
-	- Parse JSON based on HTML. ()
-	- Add title, body & options as in console. ()
-	- Print complete body for each location. ()
+5. Style the HTML. (Done)
+	- Parse JSON and print on HTML. (Done)
+	- Add title, body & options as in console. (Done)
+	- Print complete body for each location. (Done)
 
 6. Custom Templates. ()
 	- Refactor content to serve HTML. ()

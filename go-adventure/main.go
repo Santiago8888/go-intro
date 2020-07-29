@@ -68,36 +68,35 @@ func trimFirstChar(s string) string {
 
 func route(w http.ResponseWriter, r *http.Request) {
 	title := trimFirstChar(r.RequestURI)
-	parseStory(title)
-	fmt.Fprintln(w, title)
+	parseStory(title, w)
 }
 
 
 
-func parseStory(name string) {
+func parseStory(name string, w http.ResponseWriter) {
 	intro := f.acts[name]
 	v := intro.(map[string]interface{})
-	fmt.Printf("TITLE: %+v\n", v["title"])
+
+	title := v["title"]
+	fmt.Fprintln(w, title)
+	fmt.Fprintln(w, "\n")
 
 
 	story := v["story"]
 	v1 := story.([]interface{})
 
-	for i, k := range v1 {
-		if i == 0 {
-			fmt.Printf("STORY: %+v\n", k)
-		}
+	for _, k := range v1 {
+		fmt.Fprintln(w, k)
 	}
 
+	fmt.Fprintln(w, "\n")
 
 	options := v["options"]
 	v2 := options.([]interface{})
-
-	fmt.Println("OPTIONS:")
-	for i, k := range v2 {
+	for _, k := range v2 {
 		option := k.(map[string]interface{})
 		arc := option["arc"]
-		fmt.Printf("%d. %+v\n", i + 1, arc)
+		fmt.Fprintln(w, arc)
 	}
 }
 
