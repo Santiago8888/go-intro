@@ -1,6 +1,8 @@
 package main
 
 import (
+	"html/template"
+
 	"encoding/json"
 
 	"io/ioutil"
@@ -12,6 +14,23 @@ import (
 
 type Acts struct {
 	acts map[string] interface {} `json:"-"`
+}
+
+
+type Paragraph struct {
+	Text string
+}
+
+type Option struct {
+	Text string
+	Link string
+}
+
+
+type Story struct {
+	Title string
+	Paragraphs	[]Paragraph
+	Options		[]Option
 }
 
 
@@ -29,73 +48,71 @@ func main() {
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 	jsonFile.Close()
 
-
 	if err := json.Unmarshal([]byte(byteValue), &f.acts); err != nil {
 		panic(err)
 	}
 
-
-	mux := serve()
-	fmt.Println("Starting Go Adventure server on http://localhost:8080/intro")
-	http.ListenAndServe(":8080", mux)
-}
-
-
-func serve() *http.ServeMux {
-	mux := http.NewServeMux()
-
-	// TODO: Add default route that maps to index.
-	// mux.HandleFunc("/", route)
+	tmpl := template.Must(template.ParseFiles("story.html"))
 
 	for i := range f.acts {
-		mux.HandleFunc("/"+ i, route)
+		http.HandleFunc("/" + i, func(w http.ResponseWriter, r *http.Request) {
+			title := trimFirstChar(r.RequestURI)
+			story := createStory(title)
+			tmpl.Execute(w, story)
+		})
 	}
 
-	return mux
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		story := createStory("intro")
+		tmpl.Execute(w, story)
+	})
+
+	fmt.Println("Starting Go Adventure server on http://localhost:8080/intro")
+	http.ListenAndServe(":8080", nil)
 }
 
 
 func trimFirstChar(s string) string {
-    for i := range s {
-        if i > 0 {
-            return s[i:]
-        }
-    }
+	for i := range s {
+		if i > 0 {
+			return s[i:]
+		}
+	}
 
-    return s[:0]
-}
-
-func route(w http.ResponseWriter, r *http.Request) {
-	title := trimFirstChar(r.RequestURI)
-	parseStory(title, w)
+	return s[:0]
 }
 
 
+func createStory(name string) Story {
+	s := Story{}
 
-func parseStory(name string, w http.ResponseWriter) {
-	intro := f.acts[name]
-	v := intro.(map[string]interface{})
-
+	act := f.acts[name]
+	v := act.(map[string]interface{})
 	title := v["title"]
-	fmt.Fprintln(w, "<h1>" + title.(string) + "</h1>")
-	fmt.Fprintln(w, "\n")
-
+	s.Title = title.(string)
 
 	story := v["story"]
 	v1 := story.([]interface{})
-
-	for _, paragraph := range v1 {
-		fmt.Fprintln(w, "<p>" + paragraph.(string) + "</p>")
+	paragraphs := make([]Paragraph, len(v1))
+	for i, paragraph := range v1 {
+		p := Paragraph{Text: paragraph.(string)}
+		paragraphs[i] = p
 	}
-
-	fmt.Fprintln(w, "\n")
+	s.Paragraphs = paragraphs
 
 	options := v["options"]
 	v2 := options.([]interface{})
-	for _, k := range v2 {
+	opts := make([]Option, len(v2))
+	for i, k := range v2 {
 		option := k.(map[string]interface{})
 		arc := option["arc"]
-		fmt.Fprintln(w, `<a href="` + arc.(string) + `">` + arc.(string) + "</a><br/>")
+		text := option["text"]
+		o := Option{Link: arc.(string), Text: text.(string)}
+		opts[i] = o
 	}
+	s.Options = opts
+
+	return s
 }
+
 
