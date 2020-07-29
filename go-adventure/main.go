@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+//	"html/template"
 	"io/ioutil"
 	"net/http"
 	"fmt"
@@ -78,15 +79,15 @@ func parseStory(name string, w http.ResponseWriter) {
 	v := intro.(map[string]interface{})
 
 	title := v["title"]
-	fmt.Fprintln(w, title)
+	fmt.Fprintln(w, "<h1>" + title.(string) + "</h1>")
 	fmt.Fprintln(w, "\n")
 
 
 	story := v["story"]
 	v1 := story.([]interface{})
 
-	for _, k := range v1 {
-		fmt.Fprintln(w, k)
+	for _, paragraph := range v1 {
+		fmt.Fprintln(w, "<p>" + paragraph.(string) + "</p>")
 	}
 
 	fmt.Fprintln(w, "\n")
@@ -96,7 +97,7 @@ func parseStory(name string, w http.ResponseWriter) {
 	for _, k := range v2 {
 		option := k.(map[string]interface{})
 		arc := option["arc"]
-		fmt.Fprintln(w, arc)
+		fmt.Fprintln(w, `<a href="` + arc.(string) + `">` + arc.(string) + "</a><br/>")
 	}
 }
 

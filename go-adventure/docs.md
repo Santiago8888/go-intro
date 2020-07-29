@@ -15,16 +15,20 @@
 	- Create Routes based on JSON (Done).
 	- Add dynamic routes for JSON keys (Done).
 
-5. Style the HTML. (Done)
+5. Render Story. (Done)
 	- Parse JSON and print on HTML. (Done)
 	- Add title, body & options as in console. (Done)
 	- Print complete body for each location. (Done)
 
-6. Custom Templates. ()
-	- Refactor content to serve HTML. ()
-	- Add buttons for each option. ()
-	- Navigate between routes. ()
+6. Style the HTML. (Done)
+	- Refactor content to serve HTML. (Done)
+	- Add links for each option. (Done)
+	- Navigate between routes. (Done)
 
-7. Functional Options. ()
+7. Custom Templates. ()
+	- Hello World Template. ()
+	- Migrate HTML. ()
+
 8. Wrap Up. ()
+
 
