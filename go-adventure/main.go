@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-//	"html/template"
+
 	"io/ioutil"
 	"net/http"
 	"fmt"
@@ -18,8 +18,6 @@ type Acts struct {
 var f = Acts{}
 
 func main() {
-
-
 	// Open our jsonFile
 	jsonFile, err := os.Open("gopher.json")
 
