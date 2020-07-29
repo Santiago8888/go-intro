@@ -14,9 +14,10 @@ type Acts struct {
 }
 
 
+var f = Acts{}
+
 func main() {
 
-	fmt.Println("Starting Go Adventure server on http://localhost:8080")
 
 	// Open our jsonFile
 	jsonFile, err := os.Open("gopher.json")
@@ -29,21 +30,19 @@ func main() {
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 	jsonFile.Close()
 
-	f := Acts{}
 
 	if err := json.Unmarshal([]byte(byteValue), &f.acts); err != nil {
 		panic(err)
 	}
 
 
-	mux := serve(f)
-	parseStory(f, "intro")
-
+	mux := serve()
+	fmt.Println("Starting Go Adventure server on http://localhost:8080/intro")
 	http.ListenAndServe(":8080", mux)
 }
 
 
-func serve(f Acts) *http.ServeMux {
+func serve() *http.ServeMux {
 	mux := http.NewServeMux()
 
 	// TODO: Add default route that maps to index.
@@ -57,13 +56,25 @@ func serve(f Acts) *http.ServeMux {
 }
 
 
+func trimFirstChar(s string) string {
+    for i := range s {
+        if i > 0 {
+            return s[i:]
+        }
+    }
+
+    return s[:0]
+}
+
 func route(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, r.RequestURI)
+	title := trimFirstChar(r.RequestURI)
+	parseStory(title)
+	fmt.Fprintln(w, title)
 }
 
 
 
-func parseStory(f Acts, name string) {
+func parseStory(name string) {
 	intro := f.acts[name]
 	v := intro.(map[string]interface{})
 	fmt.Printf("TITLE: %+v\n", v["title"])
