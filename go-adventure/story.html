@@ -1,0 +1,10 @@
+<h1>{{.Title }}</h1>
+
+{{range .Paragraphs }}
+	<p>{{ .Text }} </p>
+{{end}}
+
+{{range .Options }}
+	<a href="{{ .Link }}">{{ .Text }} </a><br/>
+{{end}}
+
