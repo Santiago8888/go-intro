@@ -16,8 +16,9 @@ type Link struct {
 
 func main() {
 	link := Link{}
+	links := make([]Link, 0)
 
-	r, err := os.Open("ex1.html")
+	r, err := os.Open("ex2.html")
 
 	if err != nil {
 		log.Fatalln("Couldn't open the html file", err)
@@ -42,12 +43,14 @@ func main() {
 			_, attr, _ := z.TagAttr()
 			link.Href = string(attr)
 			t = "a"
-		} else { t = "" }
-
+		} else if "a" == string(name) && tt == html.EndTagToken { 
+			links = append(links, link)
+		} else {
+			t = "" 
+		}
 	}
 
-	fmt.Println(link.Text)
-	fmt.Println(link.Href)
-	fmt.Println(link)
+	fmt.Println(links)
 }
+
 
