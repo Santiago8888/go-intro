@@ -18,7 +18,7 @@ func main() {
 	link := Link{}
 	links := make([]Link, 0)
 
-	r, err := os.Open("ex3.html")
+	r, err := os.Open("ex4.html")
 
 	if err != nil {
 		log.Fatalln("Couldn't open the html file", err)
