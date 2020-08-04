@@ -8,7 +8,15 @@ import (
 )
 
 
+type Link struct {
+  Href string
+  Text string
+}
+
+
 func main() {
+	link := Link{}
+
 	r, err := os.Open("ex1.html")
 
 	if err != nil {
@@ -18,24 +26,28 @@ func main() {
 	t := ""
 	z := html.NewTokenizer(r)
 
+
 	for {
 		tt := z.Next()
 		if tt == html.ErrorToken {
-			return
+			break
 		}
 
 		if tt == html.TextToken && t == "a" {
-			fmt.Println(string(z.Text()))
+			link.Text = string(z.Text())
 		}
 
 		name, _ := z.TagName()
 		if "a" == string(name) && tt == html.StartTagToken {
 			_, attr, _ := z.TagAttr()
-			
-			fmt.Println(string(attr))
+			link.Href = string(attr)
 			t = "a"
 		} else { t = "" }
 
 	}
+
+	fmt.Println(link.Text)
+	fmt.Println(link.Href)
+	fmt.Println(link)
 }
 
