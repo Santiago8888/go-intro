@@ -18,7 +18,7 @@ func main() {
 	link := Link{}
 	links := make([]Link, 0)
 
-	r, err := os.Open("ex2.html")
+	r, err := os.Open("ex3.html")
 
 	if err != nil {
 		log.Fatalln("Couldn't open the html file", err)
@@ -44,6 +44,7 @@ func main() {
 			link.Href = string(attr)
 			t = "a"
 		} else if "a" == string(name) && tt == html.EndTagToken { 
+			fmt.Println(link)
 			links = append(links, link)
 		} else {
 			t = "" 
