@@ -2,7 +2,7 @@ package parser
 
 import (
 	"log"
-	// "fmt"
+//	"fmt"
 	"golang.org/x/net/html"
 
 	"io/ioutil"
@@ -12,8 +12,8 @@ import (
 
 
 type Link struct {
-  Href string
-  Text string
+	Href string
+	Text string
 }
 
 
@@ -48,18 +48,37 @@ func Parse(url string) []Link {
 
 		name, _ := z.TagName()
 		if "a" == string(name) && tt == html.StartTagToken {
-			_, attr, _ := z.TagAttr()
-			link.Href = string(attr)
+			for {
+				attr, value, next := z.TagAttr()
+				if string(attr) == "href" {
+					link.Href = string(value)
+				}
+
+				if next == false {
+					break
+				}
+			}
+
 			t = "a"
-		} else if "a" == string(name) && tt == html.EndTagToken { 
+
+		} else if "a" == string(name) && tt == html.EndTagToken {
 			// fmt.Println(link)
 			links = append(links, link)
+
 		} else {
-			t = "" 
+			t = ""
 		}
 	}
 
 	return links
 }
 
+func contains(s []int, e int) bool {
+    for _, a := range s {
+        if a == e {
+            return true
+        }
+    }
+    return false
+}
 
