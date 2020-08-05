@@ -5,7 +5,7 @@ Iteratevily retrieve a website's links to build a sitemap on XML protocol.
 
 ## RoadMap
 
-- [ ] Given a URL fetch the HTML Document.
+- [X] Given a URL fetch the HTML Document.
 - [ ] Convert the link-parser into a package.
 - [ ] Consume a medium size website and fetch links.
 - [ ] Filter out cross-domain links.
