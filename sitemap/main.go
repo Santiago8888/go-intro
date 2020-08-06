@@ -8,18 +8,55 @@ import (
 )
 
 func main() {
-
 	url := "https://www.calhoun.io"
 	links := fetchLinks(url, url)
 	// fmt.Println(links)
 
+	uniqueLinks := make([]parser.Link, 0)
+	for _, link := range links {
+		uniqueLinks = append(uniqueLinks, link)
+	}
+
 	visitedLinks := []string{url + "/"}
-	for _, link := range links[:5] {
+	i := 0
+	for {
+		link := uniqueLinks[i]
+		fmt.Println(len(uniqueLinks))
 		if !isVisited(link.Href, visitedLinks){
 			// visitedLinks = append(visitedLinks, link.Href)
-			fmt.Println(link.Href)
-			fmt.Println(fetchLinks(link.Href, url))
+
+			// fmt.Println("Link to Visit: ")
+			// fmt.Println(link.Href)
+			newLinks := fetchLinks(link.Href, url)
+			// fmt.Println("Fetched Links: ")
+			// fmt.Println(newLinks)
+
+			// fmt.Println("Fetched Links Length: ")
+			// fmt.Println(len(newLinks))
+
+			// fmt.Println("Len of Links I: ")
+			// fmt.Println(len(uniqueLinks))
+			uniqueLinks = getUniqueLinks(append(uniqueLinks, newLinks...))
+
+			// fmt.Println("Updated Links: ")
+			// fmt.Println(uniqueLinks)
+
+			// fmt.Println("Len of Links II: ")
+			// fmt.Println(len(uniqueLinks))
+
 			visitedLinks = append(visitedLinks, link.Href)
+			// fmt.Println("Visited Links: ")
+			// fmt.Println(visitedLinks)
+
+			links := make([]parser.Link, 0)
+			for _, link := range uniqueLinks {
+				links = append(links, link)
+			}
+		}
+
+		i ++
+		if i + 1 == len(uniqueLinks){
+			break
 		}
 	}
 
