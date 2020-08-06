@@ -4,6 +4,7 @@ import (
 	"log"
 //	"fmt"
 	"golang.org/x/net/html"
+	"strings"
 
 	"io/ioutil"
 	"net/http"
@@ -43,7 +44,7 @@ func Parse(url string) []Link {
 		}
 
 		if tt == html.TextToken && t == "a" {
-			link.Text = string(z.Text())
+			link.Text = link.Text + strings.TrimSpace(string(z.Text()))
 		}
 
 		name, _ := z.TagName()
@@ -64,9 +65,10 @@ func Parse(url string) []Link {
 		} else if "a" == string(name) && tt == html.EndTagToken {
 			// fmt.Println(link)
 			links = append(links, link)
+			link.Text = ""
+			t = ""
 
 		} else {
-			t = ""
 		}
 	}
 
